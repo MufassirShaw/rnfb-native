@@ -6,6 +6,7 @@ import RNFirebase from 'react-native-firebase';
 
 const reduxFirebaseConfig = {
     userProfile: 'users', // save users profiles to 'users' collection
+    enableRedirectHandling: false
 };
 
 const reactNativeFirebaseConfig = {
@@ -33,7 +34,7 @@ export const Store  = createStore(
             reduxFirebaseConfig
         ),
         reduxFirestore(firebase),
-        applyMiddleware(thunk.withExtraArgument(getFirebase,getFirestore))
+        applyMiddleware(thunk.withExtraArgument({getFirebase,getFirestore}))
     )
     
 );

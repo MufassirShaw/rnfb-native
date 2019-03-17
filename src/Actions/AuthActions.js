@@ -1,9 +1,10 @@
 import {PHONE_AUTH_SUCCESS, PHONE_AUTH_PENDING, PHONE_AUTH_ERROR} from "./Types";
 export const phoneAuth =(phoneNo)=>(
-    (dispatch,getState,getFirebase)=>{
+    (dispatch,getState,{getFirebase,getFirestore})=>{
         const firebase  = getFirebase();
+        const firestore = getFirestore()
 
-        console.log(firebase);
+        console.log(firestore);
         // const recaptchaVerifier = new firebase.auth.RecaptchaVerifier('sign-in-button', {
         //     'size': 'invisible',
         //   });

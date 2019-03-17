@@ -1,5 +1,5 @@
 {
-  "name": "RNFirebaseStarter",
+  "name": "fyp",
   "version": "5.1.0",
   "private": true,
   "devDependencies": {
@@ -22,8 +22,17 @@
     "preset": "react-native"
   },
   "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "libphonenumber-js": "^1.7.11",
+    "native-base": "^2.12.1",
     "react": "16.6.3",
     "react-native": "0.58.0-rc.2",
-    "react-native-firebase": "^5.2.0"
+    "react-native-easy-grid": "^0.2.1",
+    "react-native-firebase": "^5.2.0",
+    "react-redux": "^6.0.1",
+    "react-redux-firebase": "^2.2.6",
+    "redux": "^4.0.1",
+    "redux-firestore": "^0.7.2",
+    "redux-thunk": "^2.3.0"
   }
 }

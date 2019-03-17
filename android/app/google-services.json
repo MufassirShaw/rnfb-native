@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "541724072963",
+    "firebase_url": "https://rnfb-native.firebaseio.com",
+    "project_id": "rnfb-native",
+    "storage_bucket": "rnfb-native.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:541724072963:android:c1dd9bafc1bb1616",
+        "android_client_info": {
+          "package_name": "com.myfyp.fyp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "541724072963-i7p4huqrcefva7l83kde7ubd23ka8qfk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-zzV5_8-CSMk8b5MKun4jGjMGPMIJo3w"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

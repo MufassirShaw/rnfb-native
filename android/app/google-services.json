@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "541724072963-ic71b5ld5ukprdj6bfho4r3mk2el1ip9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.myfyp.fyp",
+            "certificate_hash": "8d7c39115664f3e7d1b44269eb7c15c08269e56b"
+          }
+        },
+        {
           "client_id": "541724072963-i7p4huqrcefva7l83kde7ubd23ka8qfk.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +37,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "541724072963-i7p4huqrcefva7l83kde7ubd23ka8qfk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2

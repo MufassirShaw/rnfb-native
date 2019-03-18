@@ -1,8 +1,14 @@
 import React, { Component } from 'react';
-import { Alert, StyleSheet} from 'react-native';
-import {phoneAuth} from "../../Actions/AuthActions";
+import { Alert, StyleSheet, View, TextInput} from 'react-native';
+import {
+    authRequest, 
+    codeVerification
+
+} from "../../Actions/AuthActions";
 import  {connect} from "react-redux";
 import {ParseError, parsePhoneNumber} from "libphonenumber-js";
+import {ConfirmDialog, ProgressDialog} from "react-native-simple-dialogs";
+
 import { Container, 
          Header, 
          Left, 
@@ -16,55 +22,108 @@ import { Container,
          Text,
          Grid,
          Col,
-         Row
+         Row,
     } from 'native-base';
-
 
 class SignInForm extends Component {
   constructor(props) {
     super(props);
+    console.log(props);
     this.state = {
         number: "",
-        formError:""
+        formError:"",
+        code:""
     };
   }
 
-  handleChange = (number)=>{
+  handleNumChange = (number)=>{
     this.setState({
         number
     })
 
   }
 
-  handleSubmit = ()=>{
+  handleNumSubmit = ()=>{
       //@ Convert the number to E.164 format and validate the input  
-    try {
-        const number = parsePhoneNumber(this.state.number,"PK");
-        if(number.isValid()){
-            const num = number.formatInternational();
-            this.setState({
-                formError:"",
-                number:num
-            })
-            this.props.auth(this.state.number);
-        } else{
-            this.setState({
-                formError:"INVAILD NUMBER",
-            })
-        }        
-    }catch (err) {
-        if (err instanceof ParseError) {
-            this.setState({
-                formError: err.message,
-            })
-        } else {
-        throw err
+        try {
+            const number = parsePhoneNumber(this.state.number,"PK");
+            if(number.isValid()){
+                const num = number.formatInternational();
+                this.setState({
+                    formError:"",
+                    number:num
+                })
+                this.props.auth(num);
+            } else{
+                this.setState({
+                    formError:"INVAILD NUMBER",
+                })
+            }        
+        }catch (err) {
+            if (err instanceof ParseError) {
+                this.setState({
+                    formError: err.message,
+                })
+            } else {
+            throw err
+            }
         }
     }
 
-}
+
+    handleCodeChange=(code)=>{
+        this.setState({
+            code
+        })
+    }
+    handleCodeSubmit = ()=>{
+        this.props.submitCode(this.state.code, this.props.authState.codeConfirmState)    
+
+    }
+
+    renderInputConfirmPopUp(){
+        const {confirmPopUpState} = this.props.authState;
+        return (
+            <ConfirmDialog
+                title="Confirm Dialog"
+                visible={confirmPopUpState}
+                positiveButton={{
+                    title: "Submit",
+                    onPress: this.handleCodeSubmit
+                }} >
+                <View>
+                    <TextInput 
+                        style={{
+                            fontSize: 20,
+                            borderColor:"rgba(196, 196, 196,1)",
+                            textAlign: "center",
+                            borderWidth:2
+
+                        }} 
+                        maxLength={6} 
+                        placeholder="Put Code..." 
+                        onChangeText = {this.handleCodeChange}    
+                    />
+                </View>
+            </ConfirmDialog>
+        )
+    }
+
+
+    renderProgressPopUp=()=>{
+        const {progressState} = this.props.authState        
+        return(
+            <ProgressDialog
+                visible={progressState}
+                title="Please Wait"
+                message="Sending Code..."
+            />
+        )
+    }
+
 
   render() { 
+
     return (
         <Container>
             <Header>
@@ -84,12 +143,12 @@ class SignInForm extends Component {
                             <Input 
                                 placeholder="03xx-xxxxxxx" 
                                 keyboardType="phone-pad"
-                                onChangeText={this.handleChange}
+                                onChangeText={this.handleNumChange}
                                 value={this.state.number}
                                 maxLength={15}
                                 autoFocus={true}
                                 style={styles.input}     
-                                onSubmitEditing={this.handleSubmit}     
+                                onSubmitEditing={this.handleNumSubmit}     
                                         
                             />
                             {
@@ -98,15 +157,37 @@ class SignInForm extends Component {
                             }
                         </Item>
                         </Row>
-                        <Text style={styles.formError} >{this.state.formError}</Text> 
+                        <Text style={styles.formError} >
+                            {   this.state.formError 
+                                ||
+                                this.props.authState.codeErr
+                                ||
+                                this.props.authState.phoneError
+                            }
+                        </Text> 
                     </Col>
-                </Grid>            
+                </Grid>           
+                
+                
+
+                {this.renderInputConfirmPopUp()}
+            
+                {this.renderProgressPopUp()}
+
+
+
             </Content>
         </Container>
     );
   }
 }
 
+
+
+
+
+ 
+// with message
 
 const styles = StyleSheet.create({
     input:{
@@ -125,13 +206,18 @@ const styles = StyleSheet.create({
 })
 
 
-const mapDispatchToProps = (dispatch)=>({
-    auth: (phone)=>(dispatch(phoneAuth(phone)))
-})
+const mapDispatchToProps = (dispatch)=>{
+    return{
+        auth: (phone)=>(dispatch(authRequest(phone))),
+        submitCode : (code,confirmCode)=>(dispatch(codeVerification(code,confirmCode)))
+    }
+}
 
 
-const mapStateToProps =  ()=>({
+const mapStateToProps =  (state)=>{
+    return{
+        authState: state.AuthReducer,
+    }   
+}
 
-})
-
-export default connect(null, mapDispatchToProps)(SignInForm);
+export default connect(mapStateToProps, mapDispatchToProps)(SignInForm);

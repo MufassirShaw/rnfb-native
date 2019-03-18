@@ -3,9 +3,9 @@ import thunk from "redux-thunk";
 import {getFirebase, firebaseReducer,reactReduxFirebase} from "react-redux-firebase";
 import {getFirestore,  reduxFirestore, firestoreReducer  } from "redux-firestore";
 import RNFirebase from 'react-native-firebase';
+import AuthReducer from "./../Reducers/AuthReducer";
 
 const reduxFirebaseConfig = {
-    userProfile: 'users', // save users profiles to 'users' collection
     enableRedirectHandling: false
 };
 
@@ -17,13 +17,12 @@ const reactNativeFirebaseConfig = {
 const firebase = RNFirebase.initializeApp(reactNativeFirebaseConfig);
 
 
-const reducer = (initState = {user:"someuser"})=>{
-    return initState
-  }
+
 const rootReducer = combineReducers({
     firebase: firebaseReducer,
     firestore: firestoreReducer,
-    reducer: reducer
+    AuthReducer:AuthReducer
+
 })
 
 
@@ -38,5 +37,6 @@ export const Store  = createStore(
     )
     
 );
+
 
 

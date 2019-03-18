@@ -29,6 +29,7 @@
     "react-native": "0.58.0-rc.2",
     "react-native-easy-grid": "^0.2.1",
     "react-native-firebase": "^5.2.0",
+    "react-native-simple-dialogs": "^1.1.0",
     "react-redux": "^6.0.1",
     "react-redux-firebase": "^2.2.6",
     "redux": "^4.0.1",

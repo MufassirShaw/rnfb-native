@@ -1,46 +1,49 @@
-import {PHONE_AUTH_SUCCESS, PHONE_AUTH_PENDING, PHONE_AUTH_ERROR} from "./Types";
-export const phoneAuth =(phoneNo)=>(
-    (dispatch,getState,{getFirebase,getFirestore})=>{
-        const firebase  = getFirebase();
-        const firestore = getFirestore()
+import { 
+    PHONE_AUTH_REQUESTED,
+    PHONE_CODE_ERR,
+    PHONE_AUTH_SUCCESS,
+    PHONE_CODE_SENT,
+    PHONE_NUM_ERR
+ } from "./Types";
+export const authRequest = (phoneNo) => (
+  (dispatch, getState, { getFirebase, getFirestore }) => {
+    const firebase = getFirebase();
+    dispatch({
+      type: PHONE_AUTH_REQUESTED
+    })
+    firebase.auth()
+      .signInWithPhoneNumber(phoneNo)
+      .then(confirmResult => {
+        dispatch({
+          type: PHONE_CODE_SENT,
+          payload:confirmResult
+        })
+      })
+      .catch(error => { 
 
-        console.log(firestore);
-        // const recaptchaVerifier = new firebase.auth.RecaptchaVerifier('sign-in-button', {
-        //     'size': 'invisible',
-        //   });
+        console.log(error.message);
+          dispatch({
+            type:PHONE_NUM_ERR,
+            payload:error
+          })
+      });
 
-        // dispatch({type:PHONE_AUTH_PENDING});
-        // firebase
-        //     .signInWithPhoneNumber(phoneNumber, recaptchaVerifier)
-        //     .then((confirmationResult) => {
-        //     // SMS sent. Prompt user to type the code from the message, then sign the
-        //     // user in with confirmationResult.confirm(code).
-
-        //         console.log("Code sent");
-
-        //     })
-        //     .catch((error) => {
-        //     // Error; SMS not sent
-        //     // Handle Errors Here
-        //     return Promise.reject(error)
-        //     });
+  }
+)
 
 
-        // firebase
-    //     .push("todo", newTodo)
-    //     .then(()=>{
-    //         dispatch({
-    //             type: PHONE_AUTH_SUCCESS,
-    //             payload: newTodo
-    //         })
-    //     })
-    //     .catch((err)=>{
-    //         dispatch({
-    //             type:PHONE_AUTH_ERROR,
-    //             payload:err
-    //         })
-
-    //     })
-
-    }
+export const codeVerification = (code,confirmResult)=>(
+  (dispatch, getState, { getFirebase, getFirestore }) => {
+ 
+    confirmResult.confirm(code).then((user)=>{
+      dispatch({
+        type:PHONE_AUTH_SUCCESS,
+        payload:user
+      })
+    }).catch((err)=>{
+      dispatch({
+        type:PHONE_CODE_ERR
+      })
+    })
+  }
 )

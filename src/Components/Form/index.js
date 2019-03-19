@@ -28,7 +28,6 @@ import { Container,
 class SignInForm extends Component {
   constructor(props) {
     super(props);
-    console.log(props);
     this.state = {
         number: "",
         formError:"",
@@ -123,7 +122,7 @@ class SignInForm extends Component {
 
 
   render() { 
-
+    // const {user} = this.props.authState;
     return (
         <Container>
             <Header>
@@ -132,7 +131,7 @@ class SignInForm extends Component {
                     <Title>Form</Title>
                 </Body>
                 <Right>
-                     <Icon name="clear" type="MaterialIcons" style={{color:"rgba(226, 79, 79,.88)"}}/>                
+                    <Text>Logo</Text>
                 </Right>
             </Header>
             <Content>
@@ -165,24 +164,20 @@ class SignInForm extends Component {
                                 this.props.authState.phoneError
                             }
                         </Text> 
+                        <Text style={styles.formSucess}>
+                            { this.props.authState.message }
+                        </Text>      
                     </Col>
                 </Grid>           
-                
-                
 
                 {this.renderInputConfirmPopUp()}
             
                 {this.renderProgressPopUp()}
-
-
-
             </Content>
         </Container>
     );
   }
 }
-
-
 
 
 
@@ -202,7 +197,15 @@ const styles = StyleSheet.create({
         paddingBottom: 15,
         textAlign: "center",
         color:"rgba(226, 79, 79,.88)"
+    },
+    formSucess:{
+        fontSize:18,
+        paddingTop:5,
+        paddingBottom: 15,
+        textAlign: "center",
+        color:"rgba(46, 125, 50, 0.93)"
     }
+
 })
 
 

@@ -5,7 +5,7 @@ import {Store} from "./src/Store";
 import Form from "./src/Components/Form/index";
 import Contacts from  "./src/Components/Contacts/index";
 
-export default class App extends Component{
+class App extends Component{
   render() {
     return (
         <Provider store={Store}>
@@ -18,3 +18,5 @@ export default class App extends Component{
 
 }
 
+
+export default App;

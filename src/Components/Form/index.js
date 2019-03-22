@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { Alert, StyleSheet, View, TextInput} from 'react-native';
 import {
     authRequest, 
-    codeVerification
-
+    codeVerification,
+    signOut
 } from "../../Actions/AuthActions";
 import  {connect} from "react-redux";
 import {ParseError, parsePhoneNumber} from "libphonenumber-js";
@@ -23,6 +23,8 @@ import { Container,
          Grid,
          Col,
          Row,
+         Button,
+         H2
     } from 'native-base';
 
 class SignInForm extends Component {
@@ -33,6 +35,8 @@ class SignInForm extends Component {
         formError:"",
         code:""
     };
+
+    console.log(this.props.firebaseAuth)
   }
 
   handleNumChange = (number)=>{
@@ -120,15 +124,26 @@ class SignInForm extends Component {
         )
     }
 
-
   render() { 
-    // const {user} = this.props.authState;
+    const {uid} = this.props.firebaseAuth;
+    // console.log();
+    if(uid){
+        return(
+            <Button primary large
+                onPress={()=>{
+                    this.props.signout()
+                }}
+            ><Text>Sign Out</Text></Button>
+        )
+    }
+
     return (
         <Container>
             <Header>
-                <Left/>
                 <Body>
-                    <Title>Form</Title>
+                    <H2 style={{
+                        color:"#fff"
+                    }} >Form</H2>
                 </Body>
                 <Right>
                     <Text>Logo</Text>
@@ -160,8 +175,6 @@ class SignInForm extends Component {
                             {   this.state.formError 
                                 ||
                                 this.props.authState.codeErr
-                                ||
-                                this.props.authState.phoneError
                             }
                         </Text> 
                         <Text style={styles.formSucess}>
@@ -212,7 +225,8 @@ const styles = StyleSheet.create({
 const mapDispatchToProps = (dispatch)=>{
     return{
         auth: (phone)=>(dispatch(authRequest(phone))),
-        submitCode : (code,confirmCode)=>(dispatch(codeVerification(code,confirmCode)))
+        submitCode : (code,confirmCode)=>(dispatch(codeVerification(code,confirmCode))),
+        signout : ()=>(dispatch(signOut()))
     }
 }
 
@@ -220,6 +234,8 @@ const mapDispatchToProps = (dispatch)=>{
 const mapStateToProps =  (state)=>{
     return{
         authState: state.AuthReducer,
+        firebaseAuth: state.firebase.auth
+    
     }   
 }
 

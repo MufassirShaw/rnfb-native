@@ -6,7 +6,7 @@ import RNFirebase from 'react-native-firebase';
 import AuthReducer from "./../Reducers/AuthReducer";
 
 const reduxFirebaseConfig = {
-    enableRedirectHandling: false
+    enableRedirectHandling: false,
 };
 
 const reactNativeFirebaseConfig = {
@@ -22,7 +22,6 @@ const rootReducer = combineReducers({
     firebase: firebaseReducer,
     firestore: firestoreReducer,
     AuthReducer:AuthReducer
-
 })
 
 

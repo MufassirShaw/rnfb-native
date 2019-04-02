@@ -8,6 +8,9 @@ import {
 import  {connect} from "react-redux";
 import {ParseError, parsePhoneNumber} from "libphonenumber-js";
 import {ConfirmDialog, ProgressDialog} from "react-native-simple-dialogs";
+import ImageUpload from "./ImageUpload";
+import {compose} from "redux";
+import {withFirebase,withFirestore, firestoreConnect, firebaseConnect} from "react-redux-firebase"
 
 import { Container, 
          Header, 
@@ -36,18 +39,16 @@ class SignInForm extends Component {
         code:""
     };
 
-    console.log(this.props.firebaseAuth)
-  }
+}
 
-  handleNumChange = (number)=>{
+  handlePhoneChange = (number)=>{
     this.setState({
         number
     })
 
   }
 
-  handleNumSubmit = ()=>{
-      //@ Convert the number to E.164 format and validate the input  
+  handlePhoneSubmit = ()=>{
         try {
             const number = parsePhoneNumber(this.state.number,"PK");
             if(number.isValid()){
@@ -72,16 +73,13 @@ class SignInForm extends Component {
             }
         }
     }
-
-
-    handleCodeChange=(code)=>{
+    handleOTPChange=(code)=>{
         this.setState({
             code
         })
     }
-    handleCodeSubmit = ()=>{
-        this.props.submitCode(this.state.code, this.props.authState.codeConfirmState)    
-
+    handleOTPSubmit = ()=>{
+        this.props.submitCode(this.state.code, this.props.authState.codeConfirmState) 
     }
 
     renderInputConfirmPopUp(){
@@ -92,7 +90,7 @@ class SignInForm extends Component {
                 visible={confirmPopUpState}
                 positiveButton={{
                     title: "Submit",
-                    onPress: this.handleCodeSubmit
+                    onPress: this.handleOTPSubmit
                 }} >
                 <View>
                     <TextInput 
@@ -105,7 +103,7 @@ class SignInForm extends Component {
                         }} 
                         maxLength={6} 
                         placeholder="Put Code..." 
-                        onChangeText = {this.handleCodeChange}    
+                        onChangeText = {this.handleOTPChange}    
                     />
                 </View>
             </ConfirmDialog>
@@ -115,6 +113,7 @@ class SignInForm extends Component {
 
     renderProgressPopUp=()=>{
         const {progressState} = this.props.authState        
+
         return(
             <ProgressDialog
                 visible={progressState}
@@ -124,19 +123,11 @@ class SignInForm extends Component {
         )
     }
 
-  render() { 
-    const {uid} = this.props.firebaseAuth;
-    // console.log();
-    if(uid){
-        return(
-            <Button primary large
-                onPress={()=>{
-                    this.props.signout()
-                }}
-            ><Text>Sign Out</Text></Button>
-        )
-    }
 
+  render() { 
+    const {auth,profile} = this.props.firebaseReducer; 
+
+    console.log(profile); //form firebase
     return (
         <Container>
             <Header>
@@ -150,6 +141,24 @@ class SignInForm extends Component {
                 </Right>
             </Header>
             <Content>
+            {
+                auth.uid ? //if auth is loaded check if photoUrl is there
+                    !auth.photoURL //If Not
+                        ?
+                        <ImageUpload/>   //upload it 
+                        :
+                        <Button primary large // show the rest of part
+                            onPress={()=>{
+                                this.props.signout()
+                            }}
+                        >
+                            <Text>Logout</Text>
+                            
+                        </Button>
+                        
+                    :
+                //     // if auth not loaded show sign in form
+
                 <Grid style={{height:250}}>
                     <Col style={{backgroundColor:"rgba(196, 196, 196, 0.25), "}}>
                       <Row style={{ alignItems:"center"}}>
@@ -157,12 +166,12 @@ class SignInForm extends Component {
                             <Input 
                                 placeholder="03xx-xxxxxxx" 
                                 keyboardType="phone-pad"
-                                onChangeText={this.handleNumChange}
+                                onChangeText={this.handlePhoneChange} 
                                 value={this.state.number}
                                 maxLength={15}
                                 autoFocus={true}
                                 style={styles.input}     
-                                onSubmitEditing={this.handleNumSubmit}     
+                                onSubmitEditing={this.handlePhoneSubmit}     
                                         
                             />
                             {
@@ -174,7 +183,7 @@ class SignInForm extends Component {
                         <Text style={styles.formError} >
                             {   this.state.formError 
                                 ||
-                                this.props.authState.codeErr
+                                this.props.authState.err
                             }
                         </Text> 
                         <Text style={styles.formSucess}>
@@ -182,7 +191,7 @@ class SignInForm extends Component {
                         </Text>      
                     </Col>
                 </Grid>           
-
+            }
                 {this.renderInputConfirmPopUp()}
             
                 {this.renderProgressPopUp()}
@@ -193,9 +202,35 @@ class SignInForm extends Component {
 }
 
 
+const mapDispatchToProps = (dispatch, ownProps)=>{
+    return{
+        auth: (phone)=>(dispatch(authRequest(ownProps,phone))),
+        submitCode : (code,confirmCode)=>(dispatch(codeVerification(ownProps,code,confirmCode))),
+        signout : ()=>(dispatch(signOut(ownProps)))
+    }
+}
 
- 
-// with message
+
+const mapStateToProps =  (state)=>{
+    return{
+        authState: state.AuthReducer.authState,
+        firebaseReducer: state.firebaseReducer,
+    }   
+}
+
+export default compose(
+    withFirestore, //for firebase and firestore via props.fire(X).anyAction
+    withFirebase, 
+    firestoreConnect(() => { //connect to firestore
+        return [
+            { collection: 'Users' } // object notation
+        ]
+    }),
+    connect(mapStateToProps, mapDispatchToProps)
+)(SignInForm)
+
+
+
 
 const styles = StyleSheet.create({
     input:{
@@ -221,22 +256,3 @@ const styles = StyleSheet.create({
 
 })
 
-
-const mapDispatchToProps = (dispatch)=>{
-    return{
-        auth: (phone)=>(dispatch(authRequest(phone))),
-        submitCode : (code,confirmCode)=>(dispatch(codeVerification(code,confirmCode))),
-        signout : ()=>(dispatch(signOut()))
-    }
-}
-
-
-const mapStateToProps =  (state)=>{
-    return{
-        authState: state.AuthReducer,
-        firebaseAuth: state.firebase.auth
-    
-    }   
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(SignInForm);

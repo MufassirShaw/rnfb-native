@@ -29,12 +29,14 @@
     "react-native": "0.58.0-rc.2",
     "react-native-easy-grid": "^0.2.1",
     "react-native-firebase": "^5.2.0",
+    "react-native-image-picker": "^0.28.0",
     "react-native-simple-dialogs": "^1.1.0",
     "react-native-splash-screen": "^3.2.0",
     "react-redux": "^6.0.1",
-    "react-redux-firebase": "^2.2.6",
+    "react-redux-firebase": "^3.0.0-alpha.10",
     "redux": "^4.0.1",
     "redux-firestore": "^0.7.2",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "rn-fetch-blob": "^0.10.15"
   }
 }

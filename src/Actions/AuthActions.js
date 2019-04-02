@@ -1,69 +1,97 @@
-import { 
-    PHONE_AUTH_REQUESTED,
-    PHONE_CODE_ERR,
-    PHONE_AUTH_SUCCESS,
-    PHONE_CODE_SENT,
-    PHONE_NUM_ERR
- } from "./Types";
-export const authRequest = (phoneNo) => (
-  (dispatch, getState, { getFirebase, getFirestore }) => {
-    const firebase = getFirebase();
-    dispatch({
-      type: PHONE_AUTH_REQUESTED
-    })
+import {
+  PHONE_AUTH_REQUESTED,
+  PHONE_CODE_ERR,
+  PHONE_AUTH_SUCCESS,
+  PHONE_CODE_SENT,
+  PHONE_AUTH_ERR
+} from "./Types";
+export const authRequest = (ownProps, phoneNo) => (dispatch, getState) => {
+  const firebase = ownProps.firebase;
+  const firestore = ownProps.firestore;
 
-    firebase.auth()
-      .signInWithPhoneNumber(phoneNo)
-      .then(confirmResult => {
-        dispatch({
-          type: PHONE_CODE_SENT,
-          payload:confirmResult
-        })
-        console.log("PHONE_CODE_SENT");
-      })
-      .catch(error => {        
-        console.log("error signing in ",error);
-
-        // dispatch({
-        //   type:PHONE_NUM_ERR,
-        //   payload:error
-        // })
-
-      });
-
-      //handling auto verfiication 
-
-      firebase.auth().onAuthStateChanged((user) => {
-        dispatch({
-          type:PHONE_AUTH_SUCCESS,
-        })
-      })
-
-  }
-)
-
-
-export const codeVerification = (code,confirmResult)=>(
-  (dispatch, getState, { getFirebase, getFirestore }) => {
-    confirmResult.confirm(code).then((user)=>{
+  dispatch({
+    type: PHONE_AUTH_REQUESTED
+  });
+  firebase
+    .auth()
+    .signInWithPhoneNumber(phoneNo)
+    .then(confirmResult => {
       dispatch({
-        type:PHONE_AUTH_SUCCESS,
+        type: PHONE_CODE_SENT,
+        payload: confirmResult
       });
-
-    }).catch((err)=>{
-      dispatch({
-        type:PHONE_CODE_ERR
-      })
     })
+    .catch(error => {
+      dispatch({
+        type: PHONE_AUTH_ERR,
+        payload: error.message
+      });
+    });
 
-    console.log("code err");
+  // Auto Verifcation method
+  firebase.auth().onAuthStateChanged(user => {
 
-  }
-)
+    if (user) {
+      // console.log(user)
+      //      add the user to firestore db
+      firestore
+        .collection("Users")
+        .doc(user.uid)
+        .set(
+          {
+            phoneNumber: user.phoneNumber
+          },
+          { merge: true }
+        )
+        .then(() => {
+          dispatch({
+            type: PHONE_AUTH_SUCCESS
+          });
+        });
+    }
+  });
+};
 
-export const signOut = ()=>{
-  return (dispatch, getState, { getFirebase, getFirestore }) => {
-    const firebase = getFirebase()
-    firebase.logout();
-  }
-}
+export const codeVerification = (ownProps, code, confirmResult) => (
+  dispatch,
+  getState
+) => {
+  const firestore = ownProps.firestore;
+
+  confirmResult
+    .confirm(code)
+    .then(user => {
+      //add the user to firestore db
+      firestore
+        .collection("Users")
+        .doc(user.uid)
+        .set(
+          {
+            phoneNumber: user.phoneNumber
+          },
+          { merge: true }
+        )
+        .then(() => {
+          dispatch({
+            type: PHONE_AUTH_SUCCESS
+          });
+        });
+    })
+    .catch(err => {
+      dispatch({
+        type: PHONE_CODE_ERR
+      });
+    });
+};
+
+export const signOut = ownProps => {
+  return (dispatch, getState) => {
+    const firebase = ownProps.firebase;
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        console.log("signed Out Success");
+      });
+  };
+};

@@ -154,6 +154,8 @@ android {
 }
 
 dependencies {
+    implementation project(':rn-fetch-blob')
+    implementation project(':react-native-image-picker')
     implementation project(':react-native-splash-screen')
   //noinspection GradleDynamicVersion
   implementation "com.facebook.react:react-native:+"

@@ -10,8 +10,8 @@ import {ParseError, parsePhoneNumber} from "libphonenumber-js";
 import {ConfirmDialog, ProgressDialog} from "react-native-simple-dialogs";
 import ImageUpload from "./ImageUpload";
 import {compose} from "redux";
-import {withFirebase,withFirestore, firestoreConnect, firebaseConnect} from "react-redux-firebase"
-
+import { withFirebase,withFirestore, firebaseConnect } from "react-redux-firebase"
+// import Logo from "../../../assets/imgs/logo.png"
 import { Container, 
          Header, 
          Left, 
@@ -27,7 +27,8 @@ import { Container,
          Col,
          Row,
          Button,
-         H2
+         H2,
+         Thumbnail
     } from 'native-base';
 
 class SignInForm extends Component {
@@ -38,8 +39,7 @@ class SignInForm extends Component {
         formError:"",
         code:""
     };
-
-}
+ }
 
   handlePhoneChange = (number)=>{
     this.setState({
@@ -78,6 +78,7 @@ class SignInForm extends Component {
             code
         })
     }
+    
     handleOTPSubmit = ()=>{
         this.props.submitCode(this.state.code, this.props.authState.codeConfirmState) 
     }
@@ -125,40 +126,32 @@ class SignInForm extends Component {
 
 
   render() { 
-    const {auth,profile} = this.props.firebaseReducer; 
+    const {profile, uid} = this.props;
 
-    console.log(profile); //form firebase
+
+    
     return (
         <Container>
             <Header>
-                <Body>
+                <Left>
+                    <Thumbnail source={require("./../../../assets/imgs/logo.png")} />
+                </Left>
+                <Body 
+                
+                >
                     <H2 style={{
-                        color:"#fff"
-                    }} >Form</H2>
+                        color:"#fff",
+                    }} > ChatKaro</H2>
                 </Body>
-                <Right>
-                    <Text>Logo</Text>
-                </Right>
-            </Header>
-            <Content>
-            {
-                auth.uid ? //if auth is loaded check if photoUrl is there
-                    !auth.photoURL //If Not
-                        ?
-                        <ImageUpload/>   //upload it 
-                        :
-                        <Button primary large // show the rest of part
-                            onPress={()=>{
-                                this.props.signout()
-                            }}
-                        >
-                            <Text>Logout</Text>
-                            
-                        </Button>
-                        
-                    :
-                //     // if auth not loaded show sign in form
 
+            </Header>
+
+             {
+                !profile.photoUrl && uid //If Not
+                    ?
+                    <ImageUpload/>   //upload it 
+                :
+            <Content>
                 <Grid style={{height:250}}>
                     <Col style={{backgroundColor:"rgba(196, 196, 196, 0.25), "}}>
                       <Row style={{ alignItems:"center"}}>
@@ -191,11 +184,12 @@ class SignInForm extends Component {
                         </Text>      
                     </Col>
                 </Grid>           
-            }
+            
                 {this.renderInputConfirmPopUp()}
             
                 {this.renderProgressPopUp()}
             </Content>
+        }
         </Container>
     );
   }
@@ -214,18 +208,12 @@ const mapDispatchToProps = (dispatch, ownProps)=>{
 const mapStateToProps =  (state)=>{
     return{
         authState: state.AuthReducer.authState,
-        firebaseReducer: state.firebaseReducer,
     }   
 }
 
 export default compose(
     withFirestore, //for firebase and firestore via props.fire(X).anyAction
     withFirebase, 
-    firestoreConnect(() => { //connect to firestore
-        return [
-            { collection: 'Users' } // object notation
-        ]
-    }),
     connect(mapStateToProps, mapDispatchToProps)
 )(SignInForm)
 

@@ -1,94 +1,123 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import Contact from "./Contact";
-import { Container, Header, Content,List, Text} from 'native-base';
-import {StyleSheet} from "react-native";
-export default class Contacts extends Component{
+import {
+  Container,
+  Header,
+  Content,
+  List,
+  Text,
+  Button,
+  Thumbnail,
+  Fab,
+  Icon,
+  View
+} from "native-base";
+import { compose } from "redux";
+import { connect } from "react-redux";
+import { withFirebase, withFirestore } from "react-redux-firebase";
+
+class Contacts extends Component {
   render() {
-    const contacts = [
-      {
-        phoneNumber:"021423432432",
-        photoUrl:"http://i.pravatar.cc/150"
-      },
-      {
-        phoneNumber:"3432432234",
-        photoUrl:"http://i.pravatar.cc/150"
-      },
-      {
-        phoneNumber:"2343342432",
-        photoUrl:"http://i.pravatar.cc/150"
-      },
-      {
-        phoneNumber:"021423432432",
-        photoUrl:"http://i.pravatar.cc/150"
-      },
-      {
-        phoneNumber:"3432432234",
-        photoUrl:"http://i.pravatar.cc/150"
-      },
-      {
-        phoneNumber:"2343342432",
-        photoUrl:"http://i.pravatar.cc/150"
-      },
-      {
-        phoneNumber:"021423432432",
-        photoUrl:"http://i.pravatar.cc/150"
-      },
-      {
-        phoneNumber:"3432432234",
-        photoUrl:"http://i.pravatar.cc/150"
-      },
-      {
-        phoneNumber:"2343342432",
-        photoUrl:"http://i.pravatar.cc/150"
-      },
-      {
-        phoneNumber:"021423432432",
-        photoUrl:"http://i.pravatar.cc/150"
-      },
-      {
-        phoneNumber:"3432432234",
-        photoUrl:"http://i.pravatar.cc/150"
-      },
-      {
-        phoneNumber:"2343342432",
-        photoUrl:"http://i.pravatar.cc/150"
-      }
+    const {
+      navigate,
+      profile: { contacts }
+    } = this.props;
+    const RenderedContacts = contacts && contacts.map((item, i) => {
+        return <Contact item={item} key={i} />;
+      })
 
-
-
-
-
-
-
-
-
-
-
-    ]
-
-    const RenderedContacts = contacts.map((item,i)=>(<Contact item={item} key={i}/>));
     return (
-      <Content>
-        <List style={{borderWidth:2}}>
-            {RenderedContacts}
-        </List>
-      </Content>
+      <Container>
+        <Content>
+          {
+            (RenderedContacts.length)
+            ?
+            <List>{RenderedContacts}</List>
+            :
+            <Container
+                style={{
+                  flex: 1,
+                  backgroundColor: "#dddddd",
+                  alignItems: "center",
+                  justifyContent: "center"
+                }}
+              >
+                <Icon
+                  type="FontAwesome5"
+                  name="frown"
+                  style={{
+                    color: "rgba(112, 112, 112, .3)",
+                    fontSize: 250,
+                    fontWeight: "normal"
+                  }}
+                />
+          </Container>
+        }
+        </Content>
+        <Fab
+          position="bottomRight"
+          style={{ backgroundColor: "#2F803E" }}
+          onPress={() => navigate("AddContacts")}
+        >
+          <Icon name="add" style={{ fontSize: 25 }} />
+        </Fab>
+      </Container>
     );
   }
 }
 
-const styles = StyleSheet.create({
+const mapStateToProps = state => {
+  return {
+    profile: state.firebaseReducer.profile
+  };
+};
 
-    cardItem:{
-        backgroundColor:"rgba(63, 81, 181, 0.7)",
-        
-    },
-    cardBody:{
-        alignItems:"flex-start", 
-        justifyContent:"center",
-     
-    }
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {};
+};
 
+const ContactEnhanced = compose(
+  withFirebase,
+  withFirestore,
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
+)(Contacts);
 
+export default class ContactsContainer extends Component {
+  static navigationOptions = ({ screenProps, navigationOptions }) => {
+    const { profile, signOut } = screenProps;
 
-});
+    return {
+      headerLeft: (
+        <Thumbnail
+          style={{ marginLeft: 2 }}
+          circular
+          source={{ uri: profile.photoUrl }}
+        />
+      ),
+      headerRight: (
+        <Button
+          danger
+          rounded
+          style={{
+            borderWidth: 1,
+            borderColor: "#fff",
+            marginTop: 5,
+            marginLeft: 2
+          }}
+          onPress={signOut}
+        >
+          <Text>Logout</Text>
+        </Button>
+      ),
+      title: profile.phoneNumber
+    };
+  };
+
+  render() {
+    const { navigate } = this.props.navigation;
+    return <ContactEnhanced navigate={navigate} />;
+  }
+}

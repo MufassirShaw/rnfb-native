@@ -3,7 +3,10 @@ import React from 'react';
 import { ListItem, Thumbnail, Text, Left, Body, Right, Button } from 'native-base';
 
 const Contact = ({
-    children, style, item, ...rest
+    children, 
+    style, 
+    item, 
+    ...rest
 }) => {
 
     return (
@@ -11,7 +14,7 @@ const Contact = ({
             thumbnail 
             noIndent 
             noBorder 
-            style={{backgroundColor:"#324191", marginTop:5, maxHeight:100, borderRadius:5}} 
+            style={{backgroundColor:"#5770FF", marginTop:5, maxHeight:100, borderRadius:5}} 
             button    
             onPress={()=>{
                 alert(item.phoneNumber)

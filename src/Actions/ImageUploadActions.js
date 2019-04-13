@@ -1,9 +1,7 @@
 import {IMAGE_UPLOAD_ERR, IMAGE_UPLOAD_REQUESTED,IMAGE_UPLOAD_SUCCESS} from "./Types"
 
-export const uploadPicToFirebaseStorage = (ownProps,uri) => (
-  dispatch,
-  getState
-) => {
+export const uploadPicToFirebaseStorage = (ownProps,uri) => (dispatch,getState) => {
+  
   const firebase = ownProps.firebase;
   const firestore = ownProps.firestore;
 
@@ -12,15 +10,14 @@ export const uploadPicToFirebaseStorage = (ownProps,uri) => (
   const mime = "image/jpg";
   let downloadUri = ""; 
   const imageRef = firebase.storage().ref("images/" + uid);
-
    dispatch({
      type:IMAGE_UPLOAD_REQUESTED
    })
+   console.log(IMAGE_UPLOAD_REQUESTED);
   imageRef
     .putFile(uri, { contentType: mime })
     .then(data => {
        downloadUri = data.downloadURL;
-
       return firestore
         .collection("Users")
         .doc(uid) 
@@ -30,19 +27,15 @@ export const uploadPicToFirebaseStorage = (ownProps,uri) => (
           },
           { merge: true }
         );
-    })
-    .then(()=>{
-      return currentUser.updateProfile({
-        photoURL: downloadUri
-      }) 
-    })
-    .then(()=>{
-      console.log("success");
+    }).then(()=>{
+      dispatch({
+        type: IMAGE_UPLOAD_SUCCESS
+      })
     })
     .catch(err => {
       dispatch({
-        type:IMAGE_UPLOAD_ERR
+        type:IMAGE_UPLOAD_ERR,
+        payload:err.message
       })
-      console.log(err);
     });
 };

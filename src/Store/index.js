@@ -9,6 +9,3 @@ export const Store  = createStore(
         applyMiddleware(thunk),
     )
 );
-
-
-

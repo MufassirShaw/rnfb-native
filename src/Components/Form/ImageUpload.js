@@ -6,6 +6,7 @@ import {uploadPicToFirebaseStorage} from "./../../Actions/ImageUploadActions";
 import {compose} from "redux";
 import {withFirebase,withFirestore} from "react-redux-firebase"
 import { StyleSheet } from 'react-native';
+import { ProgressDialog } from "react-native-simple-dialogs"
 
 class ImageUpload extends Component {
   constructor(props) {
@@ -27,23 +28,32 @@ class ImageUpload extends Component {
   }
 
   render() {
+    const {progressState, err} = this.props.imageUploadProps;
     return (
-      <Content contentContainerStyle={{  
-          flex:1,
+      <View style={{  
+          flex:1
         }} 
       >
-        <Body style={{flex:1,alignItems:'center',justifyContent:'center',}}>
+        <Body style={{flex:1, alignItems:'center',justifyContent:'center',}}>
           <Button primary onPress={this.onChooseImagePress} style={styles.imageUploadBtn} >
               <Icon name='camera' style={styles.cameraIcon} />
           </Button>       
         </Body>
-    </Content>
+        <ProgressDialog
+          visible={progressState}
+          title="Please Wait"
+          message="Uploading Image please wait...."
+        />
+
+        { <Text style={styles.err}>{err}</Text>}
+    </View>
     );
   }
 }
 
 const mapStateToProps = (state)=>{
   return{
+      imageUploadProps: state.imageUpload.imageUploadState
   }   
 }
 
@@ -61,8 +71,6 @@ export default compose(
 
 
 
-
-
 const styles = StyleSheet.create({
   imageUploadBtn:{
     width:200,
@@ -72,5 +80,12 @@ const styles = StyleSheet.create({
   },
   cameraIcon:{
     fontSize:100,
-  }
+  },
+  err:{
+    fontSize:18,
+    paddingTop:5,
+    paddingBottom: 15,
+    textAlign: "center",
+    color:"rgba(226, 79, 79,.88)",
+  },
 });

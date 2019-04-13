@@ -5,7 +5,7 @@ import {
   PHONE_CODE_SENT,
   PHONE_AUTH_ERR
 } from "./Types";
-export const authRequest = (ownProps, phoneNo) => (dispatch, getState) => {
+export const authRequest = (ownProps, phoneNo) =>(dispatch, getState) => {
   const firebase = ownProps.firebase;
   const firestore = ownProps.firestore;
 
@@ -14,7 +14,7 @@ export const authRequest = (ownProps, phoneNo) => (dispatch, getState) => {
   });
   firebase
     .auth()
-    .signInWithPhoneNumber(phoneNo)
+    .signInWithPhoneNumber(phoneNo, true)
     .then(confirmResult => {
       dispatch({
         type: PHONE_CODE_SENT,
@@ -30,7 +30,6 @@ export const authRequest = (ownProps, phoneNo) => (dispatch, getState) => {
 
   // Auto Verifcation method
   firebase.auth().onAuthStateChanged(user => {
-
     if (user) {
       // console.log(user)
       //      add the user to firestore db

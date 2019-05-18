@@ -42,7 +42,7 @@ class ImageUpload extends Component {
         <ProgressDialog
           visible={progressState}
           title="Please Wait"
-          message="Uploading Image please wait...."
+          message="Uploading...."
         />
 
         { <Text style={styles.err}>{err}</Text>}

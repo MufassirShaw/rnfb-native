@@ -1,13 +1,16 @@
-import React from "react"
-import { Button, Text } from "react-native"
+
 import { createStackNavigator, createAppContainer } from "react-navigation"
 import Contacts from "./../Contacts/index"
 import AddContacts from "./../Contacts/AddContacts"
-
-
+import SelectChat from "./../SelectChat/index"
+import AudioChat from "./../Chats/AudioChat";
+import TextChat from "./../Chats/TextChat";
 const AppNavigator = createStackNavigator({
     Contacts: Contacts,
-    AddContacts:AddContacts
+    AddContacts:AddContacts,
+    SelectChat : SelectChat,
+    AudioChat: AudioChat,
+    TextChat: TextChat
   },{
     defaultNavigationOptions:{
         initialRouteName: "Contacts",
@@ -17,9 +20,8 @@ const AppNavigator = createStackNavigator({
         },
         headerTintColor:"#fff",
         headerTitleStyle:{
-          flex: 1,
-          textAlign:"center",
-          color:"#fff"
+          textAlign:"left",
+          color:"#fff",
         }
     }
 })

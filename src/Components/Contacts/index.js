@@ -15,22 +15,24 @@ import {
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { withFirebase, withFirestore } from "react-redux-firebase";
+import RF from "react-native-responsive-fontsize";
 
 class Contacts extends Component {
   render() {
     const {
-      navigate,
+      navigation,
       profile: { contacts }
     } = this.props;
+
     const RenderedContacts = contacts && contacts.map((item, i) => {
-        return <Contact item={item} key={i} />;
+        return <Contact navigation={navigation} item={item} key={i} />;
       })
 
     return (
-      <Container>
+      <Container style={{flex: 1,}}>
         <Content>
           {
-            (RenderedContacts.length)
+            (RenderedContacts) && RenderedContacts.length
             ?
             <List>{RenderedContacts}</List>
             :
@@ -39,7 +41,7 @@ class Contacts extends Component {
                   flex: 1,
                   backgroundColor: "#dddddd",
                   alignItems: "center",
-                  justifyContent: "center"
+                  justifyContent: "center",
                 }}
               >
                 <Icon
@@ -47,7 +49,7 @@ class Contacts extends Component {
                   name="frown"
                   style={{
                     color: "rgba(112, 112, 112, .3)",
-                    fontSize: 250,
+                    fontSize: RF(50.0),
                     fontWeight: "normal"
                   }}
                 />
@@ -57,7 +59,7 @@ class Contacts extends Component {
         <Fab
           position="bottomRight"
           style={{ backgroundColor: "#2F803E" }}
-          onPress={() => navigate("AddContacts")}
+          onPress={() => navigation.navigate("AddContacts")}
         >
           <Icon name="add" style={{ fontSize: 25 }} />
         </Fab>
@@ -117,7 +119,7 @@ export default class ContactsContainer extends Component {
   };
 
   render() {
-    const { navigate } = this.props.navigation;
-    return <ContactEnhanced navigate={navigate} />;
+    const navigation = this.props.navigation;
+    return <ContactEnhanced navigation={navigation} />;
   }
 }

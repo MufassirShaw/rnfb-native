@@ -23,8 +23,10 @@ export const addContact = (ownProps, phone) => {
           querySnapshot.forEach(function(doc) {
             const id = doc.id;
             const {phoneNumber, photoUrl} = doc.data()
+            console.log(id);
             return firestore.collection("Users").doc(uid).set({
               contacts:[ {
+                id,
                 phoneNumber,
                 photoUrl
               }]               

@@ -58,15 +58,18 @@ class AddContacts extends Component {
             }
         }
     }
- 
+    componentWillReceiveProps({contactProps,navigation}) {
+      if(contactProps.success){
+          navigation.goBack();
+      }
+    }
+
     componentWillUnmount() {
       this.props.reset();
     }
 
   render() {
-
-    const {err, progressState, success} = this.props.contactProps;
-
+    const {err, progressState } = this.props.contactProps;
     return (
         <Content>
           <Grid style={{ height: 250 }}>
@@ -99,13 +102,6 @@ class AddContacts extends Component {
                   err 
                 }
               </Text>
-              <View style={styles.formSucess}>
-              {
-                success
-                &&
-                <Text style={{color:"#2F803E", fontSize:25}}>Success <Icon name="check" type="FontAwesome" style={{color:"#2F803E", fontSize:40}} /> </Text>
-              }
-            </View>
             </Col>
           </Grid>
           <ProgressDialog

@@ -5,7 +5,7 @@ export const addContact = (ownProps, phone) => {
     return (dispatch, getState) => {
       const firebase = ownProps.firebase;
       const uid = firebase.auth().currentUser.uid;
-
+      let loggedInUser  ={};
       const firestore = ownProps.firestore;
       phone  = phone.split(" ").join(""); // removing white spaces
       dispatch({
@@ -23,15 +23,30 @@ export const addContact = (ownProps, phone) => {
           querySnapshot.forEach(function(doc) {
             const id = doc.id;
             const {phoneNumber, photoUrl} = doc.data()
-            console.log(id);
-            return firestore.collection("Users").doc(uid).set({
-              contacts:[ {
+
+            return firestore.collection("Users").doc(uid).update({
+              contacts:firebase.firestore.FieldValue.arrayUnion({
                 id,
                 phoneNumber,
                 photoUrl
-              }]               
-            },{
-              merge: true // don't overwrite the data
+              })
+            })
+            .then(()=>{
+              const docRef = firestore.collection("Users").doc(uid);
+              return docRef.get()
+            })
+            .then((doc) =>{
+              loggedInUser = {
+                  id: doc.id,
+                  photoUrl: doc.data().photoUrl,
+                  phoneNumber: doc.data().phoneNumber
+                }
+                
+              return firestore.collection("Users").doc(id).update({
+                contacts:firebase.firestore.FieldValue.arrayUnion({
+                 ...loggedInUser
+                })
+              })
             })
             .then(()=>{
               dispatch({

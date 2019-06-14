@@ -13,7 +13,7 @@ export const uploadPicToFirebaseStorage = (ownProps,uri) => (dispatch,getState) 
    dispatch({
      type:IMAGE_UPLOAD_REQUESTED
    })
-   console.log(IMAGE_UPLOAD_REQUESTED);
+   console.log(uri);
   imageRef
     .putFile(uri, { contentType: mime })
     .then(data => {

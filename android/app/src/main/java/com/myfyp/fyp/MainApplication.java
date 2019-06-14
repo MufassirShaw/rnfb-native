@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.rnim.rn.audio.ReactNativeAudioPackage;
+import com.zmxv.RNSound.RNSoundPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import com.imagepicker.ImagePickerPackage;
@@ -47,6 +49,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.asList(
         new MainReactPackage(),
+            new ReactNativeAudioPackage(),
+            new RNSoundPackage(),
             new RNGestureHandlerPackage(),
             new RNFetchBlobPackage(),
             new ImagePickerPackage(),

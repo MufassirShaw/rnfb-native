@@ -55,10 +55,6 @@ class TextChat extends Component {
     [msg[0]];
 
     this.props.sendMessage({newThread: newMessages, chatId:this.state.chatId})
-
-    // this.setState(previousState => ({
-    //   messages: GiftedChat.append(previousState.messages, msg),
-    // }))
   }
 
 
@@ -76,7 +72,7 @@ class TextChat extends Component {
 
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    const chatPath = nextProps.chat && nextProps.chat.text[prevState.chatId] ;
+    const chatPath = nextProps.chat && nextProps.chat.text && nextProps.chat.text[prevState.chatId] ;
     if(isLoaded(chatPath) && chatPath){
       const messages = chatPath.messages;
       return {
@@ -161,7 +157,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
     createChat : (chatId)=>(dispatch(createRoom(ownProps,chatId,true))),
-    sendMessage : (data)=>(dispatch(newMessage(ownProps,data,true)))
+    sendMessage : (data)=>(dispatch(newMessage(ownProps,data,true))),
   };
 };
 

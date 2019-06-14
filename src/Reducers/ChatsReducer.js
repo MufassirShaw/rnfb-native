@@ -4,7 +4,7 @@ import {
     CHAT_CREATE_ERR, 
     CHAT_LOAD_REQUESTED,
     CHAT_LOAD_ERR,
-    CHAT_LOAD_SUCCESS
+    CHAT_LOAD_SUCCESS,
 } from "./../Actions/Types";
 const initState = {
    chatState:{
@@ -47,6 +47,7 @@ export default(state=initState, action)=>{
             }
         }
        default:{
+        
            return {
                ...state,
            }

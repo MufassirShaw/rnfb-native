@@ -34,4 +34,8 @@ target 'fyp' do
 
   pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
 
+  pod 'RNSound', :path => '../node_modules/react-native-sound'
+
+  pod 'RNAudio', :path => '../node_modules/react-native-audio'
+
 end

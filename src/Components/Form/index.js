@@ -10,7 +10,9 @@ import {ParseError, parsePhoneNumber} from "libphonenumber-js";
 import {ConfirmDialog, ProgressDialog} from "react-native-simple-dialogs";
 import ImageUpload from "./ImageUpload";
 import {compose} from "redux";
-import { withFirebase,withFirestore, firebaseConnect } from "react-redux-firebase"
+import { withFirebase,withFirestore, firebaseConnect } from "react-redux-firebase";
+import Sound from "react-native-sound";
+
 // import Logo from "../../../assets/imgs/logo.png"
 import { Container, 
          Header, 
@@ -39,8 +41,11 @@ class SignInForm extends Component {
         formError:"",
         code:""
     };
+
+    this.sound = null;
  }
 
+ 
   handlePhoneChange = (number)=>{
     this.setState({
         number
@@ -127,7 +132,6 @@ class SignInForm extends Component {
 
   render() { 
     const {profile, uid} = this.props;
-
 
     
     return (

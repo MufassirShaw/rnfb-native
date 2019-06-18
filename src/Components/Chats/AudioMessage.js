@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Button, Icon } from 'native-base';
+import { View, Text, Button, Icon, Spinner } from 'native-base';
 import Sound from 'react-native-sound';
 import {StyleSheet} from "react-native";
 
@@ -7,47 +7,87 @@ export default class AudioMessageBubble extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        // sound :null
-    };
+      playing: false,
+      loading: false
+     };
+     this.sound = null;
   }
 
-
-
   playMessage = (uri)=>{
-      var sound;
-      // These timeouts are a hacky workaround for some issues with react-native-sound.
-      // See https://github.com/zmxv/react-native-sound/issues/89.
-      setTimeout(() => {
-         sound = new Sound("https://raw.githubusercontent.com/zmxv/react-native-sound-demo/master/advertising.mp3", '', (error) => {
-          if (error) {
-            console.log('failed to load the sound', error);
+    
+    if(this.state.playing && this.sound){
+      this.sound.stop();
+      this.setState({
+        playing:false,
+        loading:false
+      })
+    
+    }else{
+        this.setState({
+          loading:true
+        })
+      
+      this.sound = new Sound(uri, null, (e) => {
+        if (e) {
+          console.log('error loading track:', e)
+          this.setState({
+            playing:false,
+            loading:false
+          })
+        } else {
+ 
+          if(this.sound.isLoaded()){    
+            this.setState({
+              playing:true,
+              loading:false
+            })  
           }
-        });    
+         
 
-        setTimeout(() => {
-          sound.play((success) => {
-            if (success) {
-              console.log('successfully finished playing');
-            } else {
-              console.log('playback failed due to audio decoding errors');
+          this.sound.play((success)=>{
+
+            if(success){
+              this.setState({
+                playing:false,
+                loading:false
+              })
+              this.sound.release();
             }
-          });
-        }, 100);
-      }, 100);
+          })
+        }
+      })
     }
 
+  }
+
+deleteMessage = (uri)=>{
+
+}
 
   render() {
-    const {uri, id} = this.props; 
-    console.log(uri,id)
+    const {uri, id} = this.props;
+    const btnIcon = this.state.playing && !this.state.loading
+              ? 
+            "stop"
+              :
+              this.state.loading
+                ? 
+                "spinner" 
+          :"play";
     return (
       <View transparent style={styles.messageBubble}>
-        <Button success style={styles.btn} onPress={()=>{this.playMessage(uri)}}>
-    
-          <Icon name="play" fontSize={40}/>       
+        <Button success={!this.state.playing} danger={this.state.playing} style={styles.btn} onPress={()=>{this.playMessage(uri)}}>
+          {
+            btnIcon==="spinner"
+             ?
+              <Spinner style={{color:"#fff"}} size={40}/>
+             :
+            <Icon name={btnIcon} type="FontAwesome" fontSize={40}/>       
+
+          }
           
         </Button>
-        <Button danger style={styles.btn} onPress={()=>{this.playMessage(uri)}}>
+        <Button warning style={styles.btn} onPress={()=>{this.deleteMessage(uri)}}>
             <Icon name="trash" fontSize={40}/>   
         </Button>
       </View>

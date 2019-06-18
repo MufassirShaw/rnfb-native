@@ -1,20 +1,21 @@
 import React, { Component } from 'react';
-import { Container,Content , Text, Thumbnail, Button, View, Spinner} from "native-base";
+import { Container,Content, View, Text, Thumbnail, Button,  Spinner, Icon} from "native-base";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { withFirebase, withFirestore, firestoreConnect, isLoaded, isEmpty } from "react-redux-firebase";
 import {createRoom , newMessage, sendAudioMessage} from "./../../Actions/Chats";
 import {GiftedChat, Bubble} from "react-native-gifted-chat"
-import {PermissionsAndroid, Platform } from 'react-native';
-import Sound from 'react-native-sound';
+import {PermissionsAndroid, Platform, StyleSheet } from 'react-native';
+
 import {AudioRecorder, AudioUtils} from 'react-native-audio';
 import AudioMessageBubble from "./AudioMessage";
+import {playAudio} from "./../../utils";
 
 class AudioChat extends Component {
 
   constructor(props) {
     super(props);
-
+    this.sound = null;
     const loggedInUserId = props.firebase.auth().currentUser.uid;
     const {sender} = this.props;
 
@@ -48,8 +49,9 @@ class AudioChat extends Component {
     }
   }
 
-  
+
   componentDidMount() {
+   this.sound = playAudio("advertising.mp3");
     AudioRecorder.requestAuthorization().then((isAuthorised) => {
       this.setState({ hasPermission: isAuthorised });
 
@@ -70,7 +72,12 @@ class AudioChat extends Component {
     });
   }
   
-
+  componentWillUnmount() {
+    if(this.sound){
+      this.sound.stop();
+      this.sound.release();
+    } 
+  }
 
   prepareRecordingPath = (audioPath)=>{
     AudioRecorder.prepareRecordingAtPath(audioPath, {
@@ -160,9 +167,9 @@ class AudioChat extends Component {
       <Content contentContainerStyle={{flex:1, alignItems:"center", justifyContent:"center"}}>
         <Spinner style={{
           flex:1,
-          height:600,
-          width:600
-        }}/>
+        }}
+        size={60}
+        />
       </Content>
     )
   }
@@ -198,15 +205,35 @@ class AudioChat extends Component {
 
   _renderComposer = ()=>{
     return (
-      <View style={{flex:1}}>
+      <Content contentContainerStyle={{
+            flex:1, 
+            flexDirection:'row', 
+            alignItems:"center", 
+            justifyContent:"center",
+          }}>
         {
           this.state.recording 
             ?
-            <Button onPress={()=>{this._stop()}} disabled={this.state.disableBtn} block><Text>Stop {this.state.currentTime}</Text></Button>
+            <Button rounded onPress={()=>{this._stop()}} disabled={this.state.disableBtn} 
+              style={{
+                width:100,
+                height:100,
+                justifyContent:"center",
+              }}
+              danger
+            >
+              <Icon name="stop" type="FontAwesome" style={{color:"#fff", fontSize:60}}/>
+            </Button>
             : 
-            <Button onPress={()=>{this._record()}} disabled={this.state.disableBtn} block><Text>Start</Text></Button>
+            <Button rounded onPress={()=>{this._record()}} disabled={this.state.disableBtn} style={{
+              width:100,
+              height:100,
+              justifyContent:"center",  
+            }}>
+                <Icon name="microphone" type="FontAwesome"  style={{color:"#fff", fontSize:80}}/>
+            </Button>
         }
-      </View>
+      </Content>
     )
   }
 
@@ -217,9 +244,9 @@ class AudioChat extends Component {
         <Content contentContainerStyle={{flex:1, alignItems:"center", justifyContent:"center"}}>
           <Spinner style={{
             flex:1,
-            height:600,
-            width:600
-          }}/>
+          }}
+          size={60}
+          />
         </Content>
       )
     }else if(this.state.messages === null ){
@@ -228,9 +255,7 @@ class AudioChat extends Component {
         <Content contentContainerStyle={{flex:1, alignItems:"center", justifyContent:"center"}}>
           <Spinner style={{
             flex:1,
-            height:600,
-            width:600
-          }}/>
+          }} size={60}/>
         </Content>
       )
     }else{
@@ -261,10 +286,14 @@ class AudioChat extends Component {
             user={sender}
             showUserAvatar
             isAnimated={true}
+            dateFormat = "DD-MM-YYYY"
             renderSystemMessage = {this.renderSystemMessage }
             renderSend = {this._renderSend}
             renderComposer = {this._renderComposer}
             renderBubble = {this.renderBubble}
+            renderChatFooter={(props)=>{
+              return <View style={{marginTop:60,}}></View>
+            }}
          />
         );
     }
@@ -359,5 +388,11 @@ export default class AudioChatContainer extends Component {
 
 
 
+var styles = StyleSheet.create({
+  playBtn:{
 
+  },
+  stopBtn:{
 
+  }
+});

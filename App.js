@@ -18,6 +18,7 @@ class App extends Component{
   
   render() {
     const {profile, auth} = this.props.firebase;
+
     if(!(profile.isLoaded && auth.isLoaded)){
       return( 
         <Container>

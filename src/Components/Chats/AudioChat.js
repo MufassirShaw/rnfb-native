@@ -51,7 +51,7 @@ class AudioChat extends Component {
 
 
   componentDidMount() {
-   this.sound = playAudio("advertising.mp3");
+   this.sound = playAudio("record_message.mp3");
     AudioRecorder.requestAuthorization().then((isAuthorised) => {
       this.setState({ hasPermission: isAuthorised });
 

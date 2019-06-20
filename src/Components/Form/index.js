@@ -12,7 +12,7 @@ import ImageUpload from "./ImageUpload";
 import {compose} from "redux";
 import { withFirebase,withFirestore, firebaseConnect } from "react-redux-firebase";
 import Sound from "react-native-sound";
-
+import {playAudio} from "./../../utils";
 // import Logo from "../../../assets/imgs/logo.png"
 import { Container, 
          Header, 
@@ -128,6 +128,21 @@ class SignInForm extends Component {
             />
         )
     }
+
+  componentDidMount() {
+    const {profile, uid} = this.props;
+    if(!uid ){
+        this.sound = playAudio("sign_up_final.mp3");
+    }
+      
+  }
+  componentWillUnmount() {
+
+    if(this.sound ){
+        this.sound.stop();
+        this.sound.release();
+    }     
+  }
 
 
   render() { 

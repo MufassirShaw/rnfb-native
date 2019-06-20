@@ -16,8 +16,22 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { withFirebase, withFirestore } from "react-redux-firebase";
 import RF from "react-native-responsive-fontsize";
-
+import {playAudio} from "./../../utils";
 class Contacts extends Component {
+  constructor(props) {
+    super(props);
+    this.sound = null;
+  }
+  
+  componentDidMount() {
+    this.sound = playAudio("add_friend.mp3");
+  }
+
+  componentWillUnmount() {
+      this.sound.stop();
+      this.sound.release();
+  }
+
   render() {
     const {
       navigation,

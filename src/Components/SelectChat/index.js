@@ -1,12 +1,19 @@
 import { Container, Text, Thumbnail, Button, View, Body, Icon } from "native-base";
 import React, { Component } from 'react';
 import {StyleSheet} from "react-native";
-
+import {playAudio} from "./../../utils";
 class SelectChat extends Component { 
-    static navigationOptions = (navProps) => {
+  constructor(props) {
+    super(props);
+    this.sound =  null;
+  }
+
+  static navigationOptions = (navProps) => {
       const { profile, signOut} = navProps.screenProps;
       const phoneNumber =  navProps.navigation.getParam('phoneNumber');
       const photoUrl =  navProps.navigation.getParam('photoUrl');
+
+      
 
       return {
         headerLeft: (
@@ -35,6 +42,15 @@ class SelectChat extends Component {
       };
     };
   
+    componentDidMount() {
+      this.sound = playAudio("send_message.mp3")
+    }
+    componentWillUnmount() {
+      if(this.sound){
+        this.sound.stop();
+        this.sound.release();
+      }     
+    }
   
     render() {
       const {navigation }= this.props

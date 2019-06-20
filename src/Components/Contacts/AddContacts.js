@@ -20,11 +20,19 @@ import { StyleSheet } from "react-native";
 import { addContact} from "./../../Actions/ContactsActions"
 import { RESET } from "./../../Actions/Types";
 
+import {playAudio} from "./../../utils";
+
 class AddContacts extends Component {
-    state = {
+
+    constructor(props) {
+      super(props);
+      this.sound = null;      
+      this.state = {
         number: "",
         formError:"",
-    };
+      };
+    }
+    
 
     handlePhoneChange = (number)=>{
         this.setState({
@@ -64,8 +72,15 @@ class AddContacts extends Component {
       }
     }
 
+  componentDidMount() {
+    this.sound =  playAudio("insert_friend_number.mp3");
+  }
     componentWillUnmount() {
       this.props.reset();
+      if(this.sound){
+        this.sound.stop();
+        this.sound.release();
+      }     
     }
 
   render() {

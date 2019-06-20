@@ -7,6 +7,7 @@ import {compose} from "redux";
 import {withFirebase,withFirestore} from "react-redux-firebase"
 import { StyleSheet } from 'react-native';
 import { ProgressDialog } from "react-native-simple-dialogs"
+import {playAudio} from "./../../utils"
 
 class ImageUpload extends Component {
   constructor(props) {
@@ -14,6 +15,7 @@ class ImageUpload extends Component {
     this.state = {
       err:""
     };
+    this.sound = null;
   }
 
   onChooseImagePress = ()=>{
@@ -26,6 +28,17 @@ class ImageUpload extends Component {
       }
     });
   }
+
+  componentDidMount() {
+    this.sound = playAudio("upload_picture.mp3");
+  }
+  componentWillUnmount() {
+    if(this.sound){
+        this.sound.stop();
+        this.sound.release();
+    }     
+  }
+
 
   render() {
     const {progressState, err} = this.props.imageUploadProps;
